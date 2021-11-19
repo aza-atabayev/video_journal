@@ -57,6 +57,27 @@ class Model():
 
             return index, label
 
+def get_prediction(video_path):
+    assert os.path.exists(video_path)
+    video = cv2.VideoCapture(video_path)
+    fps = video.get(cv2.CAP_PROP_FPS)
+    n_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+    print(fps, n_frames)   
+
+    x1, y1, x2, y2 = crop_sizes["x1"], crop_sizes["y1"], crop_sizes["x2"], crop_sizes["y2"]
+
+    model = Model()
+    prediction = []
+    for idx in range(0, n_frames, int(1/2*fps)):
+        video.set(cv2.CAP_PROP_POS_FRAMES, idx)
+        ret, frame = video.read()
+        frame = frame[y1:y2, x1:x2]
+        index, label = model.fit(frame)
+        prediction.append((label, idx/fps))
+        print(f'emotion label: {label} at {idx/fps} seconds')
+    return prediction
+
+
 if __name__ == "__main__":
     args = parse_args()
 
@@ -64,7 +85,7 @@ if __name__ == "__main__":
 
     #image = args.image
     video_path = args.video
-    assert os.path.exists(video_path)
+    #assert os.path.exists(video_path)
     video = cv2.VideoCapture(video_path)
     fps = video.get(cv2.CAP_PROP_FPS)
     n_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
