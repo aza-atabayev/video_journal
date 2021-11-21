@@ -7,7 +7,7 @@ import cv2
 import torch
 from torchvision import transforms
 
-from networks.dan import DAN
+from DAN.networks.dan import DAN
 
 crop_sizes = {
     "x1": 600,
@@ -36,7 +36,7 @@ class Model():
         self.labels = ['neutral', 'happy', 'sad', 'surprise', 'fear', 'disgust', 'anger', 'contempt']
 
         self.model = DAN(num_head=4, num_class=8)
-        checkpoint = torch.load('./checkpoints/affecnet8_epoch5_acc0.6209.pth',
+        checkpoint = torch.load('DAN/checkpoints/affecnet8_epoch5_acc0.6209.pth',
             map_location=self.device)
         self.model.load_state_dict(checkpoint['model_state_dict'],strict=True)
         self.model.to(self.device)
@@ -64,16 +64,24 @@ def get_prediction(video_path):
     n_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
     print(fps, n_frames)   
 
-    x1, y1, x2, y2 = crop_sizes["x1"], crop_sizes["y1"], crop_sizes["x2"], crop_sizes["y2"]
-
+    #x1, y1, x2, y2 = crop_sizes["x1"], crop_sizes["y1"], crop_sizes["x2"], crop_sizes["y2"]
+    face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
     model = Model()
     prediction = []
     for idx in range(0, n_frames, int(1/2*fps)):
         video.set(cv2.CAP_PROP_POS_FRAMES, idx)
         ret, frame = video.read()
-        frame = frame[y1:y2, x1:x2]
-        index, label = model.fit(frame)
-        prediction.append((label, idx/fps))
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        cv2.imwrite('gray.jpeg',gray)
+        face = face_cascade.detectMultiScale(gray, 1.1, 4)
+        if face != ():
+            x, y, w, h = face[0]
+            frame = frame[y:y+h, x:x+w]
+            cv2.imwrite('frame.jpeg',frame)
+            index, label = model.fit(frame)
+            prediction.append((label, idx/fps))
+        else:
+            prediction.append(("Face not found", idx/fps))
         print(f'emotion label: {label} at {idx/fps} seconds')
     return prediction
 

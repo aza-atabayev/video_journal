@@ -11,7 +11,7 @@ class DAN(nn.Module):
         
         resnet = models.resnet18(True)
         
-        checkpoint = torch.load('./models/resnet18_msceleb.pth', map_location=torch.device('cpu'))
+        checkpoint = torch.load('DAN/models/resnet18_msceleb.pth', map_location=torch.device('cpu'))
         resnet.load_state_dict(checkpoint['state_dict'],strict=True)
 
         self.features = nn.Sequential(*list(resnet.children())[:-2])
