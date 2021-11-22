@@ -57,7 +57,7 @@ class Model():
 
             return index, label
 
-def get_prediction(video_path):
+def get_prediction_video(video_path):
     assert os.path.exists(video_path)
     video = cv2.VideoCapture(video_path)
     fps = video.get(cv2.CAP_PROP_FPS)
