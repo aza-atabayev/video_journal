@@ -2,16 +2,22 @@ import cv2
 import threading
 import datetime
 
+from DAN.demo import get_prediction_video
+import time
+
 class RecordingThread (threading.Thread):
     def __init__(self, name, camera):
         threading.Thread.__init__(self)
         self.name = name
         self.isRunning = True
 
+        global file_path
+
         now=datetime.datetime.now()
         self.cap = camera
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        self.out = cv2.VideoWriter('./data/vid_{}.avi'.format(str(now).replace(":",'')),fourcc, 15.0, (1280,720))
+        file_path = 'data/vid_{}.avi'.format(str(now).replace(":",''))
+        self.out = cv2.VideoWriter(file_path,fourcc, 15.0, (1280,720))
 
     def run(self):
         while self.isRunning:
@@ -20,6 +26,7 @@ class RecordingThread (threading.Thread):
                 self.out.write(frame)
 
         self.out.release()
+        get_prediction_video(file_path)
 
     def stop(self):
         self.isRunning = False
