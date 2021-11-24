@@ -1,4 +1,5 @@
 env/
 checkpoints/
 models/
-data/
+data/*
+model/

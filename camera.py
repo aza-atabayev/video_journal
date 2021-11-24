@@ -16,7 +16,7 @@ class RecordingThread (threading.Thread):
         now=datetime.datetime.now()
         self.cap = camera
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        file_path = 'data/vid_{}.avi'.format(str(now).replace(":",''))
+        file_path = 'data/video/vid_{}.avi'.format(str(now).replace(":",''))
         self.out = cv2.VideoWriter(file_path,fourcc, 15.0, (1280,720))
 
     def run(self):

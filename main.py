@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify
 
 import  sys
+import datetime
 
 from DAN.demo import get_prediction_video, Model
+import scripts.google_full as model
 
 from flask import Flask, render_template, Response, jsonify, request
 from camera import VideoCamera
@@ -12,9 +14,26 @@ app = Flask(__name__)
 video_camera = None
 global_frame = None
 
-@app.route('/')
+@app.route('/', methods=['POST', 'GET'])
 def index():
-    return render_template('index.html')
+    if request.method == "POST":
+        #return '1'
+        f = request.files['audio_data']
+        now=datetime.datetime.now()
+        print(type(now))
+        filename = 'data/audio/audio_{}.wav'.format(str(now).replace(":",''))
+        with open(filename, 'wb') as audio:
+            f.save(audio)
+        print('file uploaded successfully')
+
+        prediction = model.get_prediction_audio(filename)
+        data = {'prediction': prediction}
+        print(data)
+        return render_template('index.html', request="POST")   
+    else:
+        return render_template("index.html")
+        
+
 
 @app.route('/record_status', methods=['POST'])
 def record_status():
