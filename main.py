@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 
 import  sys
 import datetime
@@ -8,8 +8,13 @@ import scripts.google_full as model
 
 from flask import Flask, render_template, Response, jsonify, request
 from camera import VideoCamera
+from pathlib import Path
 
 app = Flask(__name__)
+
+@app.route("/data/video/<path:filename>")
+def download(filename):
+    return send_from_directory("data/video", filename)
 
 video_camera = None
 global_frame = None
@@ -19,9 +24,9 @@ def index():
     if request.method == "POST":
         #return '1'
         f = request.files['audio_data']
-        now=datetime.datetime.now()
-        print(type(now))
-        filename = 'data/audio/audio_{}.wav'.format(str(now).replace(":",''))
+        now = str(datetime.datetime.now()).split(" ")
+        Path(f"data/audio/{now[0]}/").mkdir(parents=True, exist_ok=True)
+        filename = f'data/audio/{now[0]}/{now[1]}.wav'
         with open(filename, 'wb') as audio:
             f.save(audio)
         print('file uploaded successfully')
