@@ -72,9 +72,8 @@ class VideoCamera(object):
         else:
             return None
 
-    def start_record(self,):
+    def start_record(self,now):
         self.is_record = True
-        now = str(datetime.datetime.now()).split(" ")
         self.recordingThread = RecordingThread("Video Recording Thread", self.cap, now)
         self.recordingThread.start()
 

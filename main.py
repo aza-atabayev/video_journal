@@ -12,6 +12,7 @@ from pathlib import Path
 
 app = Flask(__name__)
 
+
 @app.route("/data/video/<path:filename>")
 def download(filename):
     return send_from_directory("data/video", filename)
@@ -21,10 +22,9 @@ global_frame = None
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
+    global now
     if request.method == "POST":
-        #return '1'
         f = request.files['audio_data']
-        now = str(datetime.datetime.now()).split(" ")
         Path(f"data/audio/{now[0]}/").mkdir(parents=True, exist_ok=True)
         filename = f'data/audio/{now[0]}/{now[1]}.wav'
         with open(filename, 'wb') as audio:
@@ -42,7 +42,7 @@ def index():
 
 @app.route('/record_status', methods=['POST'])
 def record_status():
-    global video_camera 
+    global video_camera, now
     if video_camera == None:
         video_camera = VideoCamera()
 
@@ -51,7 +51,8 @@ def record_status():
     status = json['status']
 
     if status == "true":
-        video_camera.start_record()
+        now = str(datetime.datetime.now()).split(" ")
+        video_camera.start_record(now)
         return jsonify(result="started")
     else:
         video_camera.stop_record()
