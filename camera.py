@@ -16,8 +16,8 @@ class RecordingThread (threading.Thread):
 
         self.cap = camera
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        Path(f"data/images/{now[0]}/").mkdir(parents=True, exist_ok=True)
-        file_path = f'data/images/{now[0]}/{now[1]}.avi'
+        #Path(f"data/images/{now[0]}/").mkdir(parents=True, exist_ok=True)
+        file_path = "data/images/{}{}.avi".format(now[0], now[1].replace(":", "").replace(".", ""))
         self.out = cv2.VideoWriter(file_path,fourcc, 15.0, (1280,720))
 
     def run(self):

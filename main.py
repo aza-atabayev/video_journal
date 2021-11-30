@@ -2,16 +2,18 @@ from flask import Flask, request, jsonify, send_from_directory
 
 import  sys
 import datetime
-
+import time
 from DAN.demo import get_prediction_video, Model
 import scripts.google_full as model
 
 from flask import Flask, render_template, Response, jsonify, request
 from camera import VideoCamera
 from pathlib import Path
+import moviepy.editor as mpe
+
+import ffmpeg
 
 app = Flask(__name__)
-
 
 @app.route("/data/video/<path:filename>")
 def download(filename):
@@ -25,19 +27,26 @@ def index():
     global now
     if request.method == "POST":
         f = request.files['audio_data']
-        Path(f"data/audio/{now[0]}/").mkdir(parents=True, exist_ok=True)
-        filename = f'data/audio/{now[0]}/{now[1]}.wav'
-        with open(filename, 'wb') as audio:
+        #Path(f"data/audio/{now[0]}/").mkdir(parents=True, exist_ok=True)
+        filename = "{}{}".format(now[0], now[1].replace(":", "").replace(".", ""))
+        with open(f"data/audio/{filename}.wav", 'wb') as audio:
             f.save(audio)
         print('file uploaded successfully')
-
-        prediction = model.get_prediction_audio(filename)
+    
+        save_ffmpeg(filename)
+  
+        prediction = model.get_prediction_audio(f'data/audio/{filename}.wav')
         data = {'prediction': prediction}
         print(data)
+        
         return render_template('index.html', request="POST")   
     else:
         return render_template("index.html")
         
+def save_ffmpeg(filename):
+    video  = ffmpeg.input(f"data/images/{filename}.avi").video # get only video channel
+    audio  = ffmpeg.input(f"data/audio/{filename}.wav").audio # get only audio channel
+    output = ffmpeg.output(video, audio, f"data/video/{filename}.mp4", vcodec='copy', acodec='aac', strict='experimental')
 
 
 @app.route('/record_status', methods=['POST'])
