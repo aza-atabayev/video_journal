@@ -47,7 +47,7 @@ def save_ffmpeg(filename):
     video  = ffmpeg.input(f"data/images/{filename}.avi").video # get only video channel
     audio  = ffmpeg.input(f"data/audio/{filename}.wav").audio # get only audio channel
     output = ffmpeg.output(video, audio, f"data/video/{filename}.mp4", vcodec='copy', acodec='aac', strict='experimental')
-
+    ffmpeg.run(output)
 
 @app.route('/record_status', methods=['POST'])
 def record_status():
