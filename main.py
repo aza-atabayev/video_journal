@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, send_from_directory
 
+import os
 import  sys
 import datetime
 import time
@@ -10,8 +11,9 @@ from flask import Flask, render_template, Response, jsonify, request
 from camera import VideoCamera
 from pathlib import Path
 import moviepy.editor as mpe
-
 import ffmpeg
+
+import json
 
 app = Flask(__name__)
 
@@ -92,6 +94,14 @@ def video_viewer():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', threaded=True)
+
+@app.route('/journal', methods = ['GET'])
+def send_all():
+    list_dir = os.listdir('data/video')
+    for item in list_dir:
+        if item[-4:] != '.mp4':
+            list_dir.remove(item)
+    return render_template('journal.html', result=list_dir)
 
 @app.route('/predict', methods=['POST'])
 def predict():
