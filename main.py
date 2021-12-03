@@ -1,3 +1,4 @@
+from types import resolve_bases
 from flask import Flask, request, jsonify, send_from_directory
 
 import os
@@ -102,6 +103,12 @@ def send_all():
         if item[-4:] != '.mp4':
             list_dir.remove(item)
     return render_template('journal.html', result=list_dir)
+
+@app.route('/report', methods=['GET'])
+def report():
+    video_link = request.args.get('video')
+    data = video_link
+    return render_template('report.html', data = data)
 
 @app.route('/predict', methods=['POST'])
 def predict():
