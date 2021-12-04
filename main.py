@@ -146,7 +146,23 @@ def send_all():
 @app.route('/report', methods=['GET'])
 def report():
     video_link = request.args.get('video')
-    data = video_link
+    print(video_link)
+    f=open(f"data/res/{video_link[1:-4]}.txt", "r")
+    results = f.readlines()
+    f.close()
+    video_data = []
+    for result in results:
+        t_start, t_end, res = result.split('/')
+        t_start, t_end, res = float(t_start), float(t_end), res[:-2]
+        video_data.append({
+            't_start':t_start,
+            't_end':t_end,
+            'res': res
+        })
+    data = {
+        'link':video_link,
+        'video_data': video_data
+        }
     return render_template('report.html', data = data)
 
 @app.route('/predict', methods=['POST'])
