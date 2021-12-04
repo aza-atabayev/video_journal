@@ -81,7 +81,7 @@ def get_prediction_video(video_path):
             index, label = model.fit(frame)
             prediction.append((label, idx/fps))
         else:
-            prediction.append(("Face not found", idx/fps))
+            prediction.append(("neutral", idx/fps))
         print(f'emotion label: {label} at {idx/fps} seconds')
     return prediction
 

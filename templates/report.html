@@ -1,2 +1,21 @@
 <!DOCTYPE html>
-{{ data }}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/stylesheets/styles.css">
+    <title>Document</title>
+</head>
+<body>
+    <p>{{ data.link }}</p>
+    {% for stamp in data.video_data %}
+    <video class="single_video">
+        <source src="data/video/{{ data.link }}#t={{ stamp.t_start }},{{ stamp.t_end }}"> 
+    </video>
+    {% endfor %}
+
+    <button class="button-33" onclick="location.href='/'">Home</button>
+    <script src="/static/report.js"></script>
+</body>
+</html>

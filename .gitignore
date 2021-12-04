@@ -3,3 +3,4 @@ checkpoints/
 models/
 data/*
 model/
+__pycache__/

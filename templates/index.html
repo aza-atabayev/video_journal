@@ -17,16 +17,11 @@
       <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
     </div>
     <img id="video" class="input_video" src="{{ url_for('video_viewer') }}">
-    <button class="button-33" onclick="location.href='/results'" type="button">Recall past sessions</button>
+    <button class="button-33" onclick="location.href='/journal'" type="button">Recall past sessions</button>
     <!-- inserting these scripts at the end to be able to use all the elements in the DOM -->
     <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
     <script src="/static/app.js"></script>
   </div>
-  <div id="formats">Format: start recording to see sample rate</div>
-  <p><strong>Recordings:</strong></p>
-  <ol id="recordingsList"></ol>
-  <img id="video" src="{{ url_for('video_viewer') }}">
-
   <!-- inserting these scripts at the end to be able to use all the elements in the DOM -->
 </body>
 </html>

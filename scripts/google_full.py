@@ -92,8 +92,8 @@ def recongize_vosk(audio_filename, text_filename, model_path='model'):
         clean_first = ''.join([letter for letter in first if letter in ascii_letters])
         last = words[-1]
         clean_last = ''.join([letter for letter in last if letter in ascii_letters])
-        start = 'a'
-        end = 'a'
+        start = '0'
+        end = '0.1'
         #print(clean_first + " " + clean_last)
         for i in range(ind, len(list_words)):
             temp = list_words[i].split('/')
@@ -104,7 +104,7 @@ def recongize_vosk(audio_filename, text_filename, model_path='model'):
                 start = temp_start
                 end = temp_end
                 clean_first = '-1'
-            elif start!='a' and clean_last.lower() == temp_word:
+            elif start!='0' and clean_last.lower() == temp_word:
                 end = temp_end
                 ind+=1
                 break

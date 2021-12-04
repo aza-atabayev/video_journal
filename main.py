@@ -34,6 +34,10 @@ emotion_coefficient = {
 def download(filename):
     return send_from_directory("data/video", filename)
 
+@app.route("/data/images/<path:filename>")
+def raw_video(filename):
+    return send_from_directory("data/images", filename)
+
 @app.route("/stylesheets/<path:filename>")
 def styles(filename):
     return send_from_directory("stylesheets", filename)
@@ -60,23 +64,28 @@ def index():
 
         audio_prediction = model.get_prediction_audio(f'data/audio/{filename}.wav')
         print(audio_prediction)
-        video_scores = []
+
         data = []
-        sum_res = 0
+
         for audio in audio_prediction:
+            video_scores = []
+            sum_res = 0
             _, t_start, t_end, audio_res, confidence = audio.split('/')
             t_start, t_end = float(t_start), float(t_end)
             if audio_res == 'pos': audio_res = 1
             else: audio_res = -1
-            label, t = video_prediction[0]
-            print(label)
-            while t < t_end:
-                if t > t_start:
-                    video_scores.append(emotion_coefficient[label])
-                video_prediction.pop(0)
-                if len(video_prediction) == 0: break
+            if len(video_prediction) != 0:
                 label, t = video_prediction[0]
-            final_res = audio_res + np.mean(video_scores)
+                print(label)
+                while t < t_end:
+                    if t > t_start:
+                        video_scores.append(emotion_coefficient[label])
+                    video_prediction.pop(0)
+                    if len(video_prediction) != 0:
+                        label, t = video_prediction[0]
+                final_res = audio_res + np.mean(video_scores)
+            else:
+                final_res = audio_res
             sum_res += final_res
             data.append(f'{t_start}/{t_end}/{final_res}')
     
@@ -95,8 +104,8 @@ def save_ffmpeg(filename, sum_res):
     video  = ffmpeg.input(f"data/images/{filename}.avi").video # get only video channel
     audio  = ffmpeg.input(f"data/audio/{filename}.wav").audio # get only audio channel
     if sum_res >= 0: filename = str(1) + filename 
-    else: str(0) + filename
-    output = ffmpeg.output(video, audio, f"data/video/{filename}.mp4", vcodec='copy', acodec='aac', strict='experimental')
+    else: filename = str(0) + filename
+    output = ffmpeg.output(video, audio, f"data/video/{filename}.mp4", vcodec='libx264', acodec='aac', strict='experimental')
     ffmpeg.run(output)
 
 @app.route('/record_status', methods=['POST'])
@@ -146,10 +155,15 @@ if __name__ == '__main__':
 @app.route('/journal', methods = ['GET'])
 def send_all():
     list_dir = os.listdir('data/video')
+    state = []
     for item in list_dir:
+        state.append(item[0])
         if item[-4:] != '.mp4':
             list_dir.remove(item)
-    return render_template('journal.html', result=list_dir)
+        # else:
+        #     list_dir[i] = list_dir[i][1:-4] + '.avi'
+        #list_dir = zip(list_dir, state)
+    return render_template('results.html', result=list_dir)
 
 @app.route('/report', methods=['GET'])
 def report():
@@ -185,6 +199,6 @@ def predict():
     except:
         return jsonify({'error': 'error during prediction'})
 
-@app.route('/results')
-def results():
-    return render_template('results.html')
+# @app.route('/results')
+# def results():
+#     return render_template('results.html')

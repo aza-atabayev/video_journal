@@ -10,7 +10,17 @@
 <body>
     <div class="wrapper">
         <h1>Review your past journals</h1>
-        <div id="list_container"></div>
+        <div id="list_container">
+            {% for link in result %}
+            <div id="{{ link }}" class="container">
+                <video class="video_file">
+                    <source src="data/video/{{ link }}" type="video/mp4">
+                </video>
+                <p id="{{ link[0] }}"></p>
+            </div>
+            {% endfor %}
+        </div>
+        <button class="button-33" onclick="location.href='/'">Home</button>
 
         <script src="/static/results.js"></script>
     </div>
