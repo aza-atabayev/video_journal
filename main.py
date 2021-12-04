@@ -13,10 +13,22 @@ from camera import VideoCamera
 from pathlib import Path
 import moviepy.editor as mpe
 import ffmpeg
-
+import numpy as np
 import json
 
 app = Flask(__name__)
+
+emotion_coefficient = {
+    'neutral': 0,
+    'happy': 1,
+    'anger': -0.4,
+    'sad':-1,
+    'fear': -0.8,
+    'surprise': 0.5,
+    'disgust': -0.2,
+    'contempt': 0.3
+}
+
 
 @app.route("/data/video/<path:filename>")
 def download(filename):
@@ -43,20 +55,47 @@ def index():
         with open(f"data/audio/{filename}.wav", 'wb') as audio:
             f.save(audio)
         print('file uploaded successfully')
-    
-        save_ffmpeg(filename)
   
-        prediction = model.get_prediction_audio(f'data/audio/{filename}.wav')
-        data = {'prediction': prediction}
+        video_prediction = get_prediction_video(video_camera.file_path)
+
+        audio_prediction = model.get_prediction_audio(f'data/audio/{filename}.wav')
+        print(audio_prediction)
+        video_scores = []
+        data = []
+        sum_res = 0
+        for audio in audio_prediction:
+            _, t_start, t_end, audio_res, confidence = audio.split('/')
+            t_start, t_end = float(t_start), float(t_end)
+            if audio_res == 'pos': audio_res = 1
+            else: audio_res = -1
+            label, t = video_prediction[0]
+            print(label)
+            while t < t_end:
+                if t > t_start:
+                    video_scores.append(emotion_coefficient[label])
+                video_prediction.pop(0)
+                if len(video_prediction) == 0: break
+                label, t = video_prediction[0]
+            final_res = audio_res + np.mean(video_scores)
+            sum_res += final_res
+            data.append(f'{t_start}/{t_end}/{final_res}')
+    
         print(data)
+        f = open(f"data/res/{filename}.txt", "w+")
+        for line in data:
+            f.write(line + '\n')
+        f.close
+        save_ffmpeg(filename, sum_res)
         
         return render_template('index.html', request="POST")   
     else:
         return render_template("index.html")
         
-def save_ffmpeg(filename):
+def save_ffmpeg(filename, sum_res):
     video  = ffmpeg.input(f"data/images/{filename}.avi").video # get only video channel
     audio  = ffmpeg.input(f"data/audio/{filename}.wav").audio # get only audio channel
+    if sum_res >= 0: filename = str(1) + filename 
+    else: str(0) + filename
     output = ffmpeg.output(video, audio, f"data/video/{filename}.mp4", vcodec='copy', acodec='aac', strict='experimental')
     ffmpeg.run(output)
 
@@ -115,7 +154,23 @@ def send_all():
 @app.route('/report', methods=['GET'])
 def report():
     video_link = request.args.get('video')
-    data = video_link
+    print(video_link)
+    f=open(f"data/res/{video_link[1:-4]}.txt", "r")
+    results = f.readlines()
+    f.close()
+    video_data = []
+    for result in results:
+        t_start, t_end, res = result.split('/')
+        t_start, t_end, res = float(t_start), float(t_end), res[:-2]
+        video_data.append({
+            't_start':t_start,
+            't_end':t_end,
+            'res': res
+        })
+    data = {
+        'link':video_link,
+        'video_data': video_data
+        }
     return render_template('report.html', data = data)
 
 @app.route('/predict', methods=['POST'])
@@ -127,7 +182,6 @@ def predict():
         prediction = get_prediction_video(video_path)
         data = {'prediction': prediction}
         return jsonify(data)
-
     except:
         return jsonify({'error': 'error during prediction'})
 
