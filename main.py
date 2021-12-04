@@ -16,6 +16,14 @@ app = Flask(__name__)
 def download(filename):
     return send_from_directory("data/video", filename)
 
+@app.route("/stylesheets/<path:filename>")
+def styles(filename):
+    return send_from_directory("stylesheets", filename)
+
+app.route("/data/<path:filename>")
+def download(filename):
+    return send_from_directory("data", filename)
+
 video_camera = None
 global_frame = None
 
@@ -95,3 +103,7 @@ def predict():
 
     except:
         return jsonify({'error': 'error during prediction'})
+
+@app.route('/results')
+def results():
+    return render_template('results.html')

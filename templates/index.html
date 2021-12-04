@@ -2,27 +2,25 @@
 <html>
 <head>
   <title>Streaming Video Recorder</title>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="/stylesheets/styles.css">
 </head>
 <body>
-  <h1>Streaming Video Recorder</h1>
-  <div id="recorder">
-    <button id="record">Record</button>
-    <button id="stop">Stop</button>
-    <a id="download"></a>
-    <!--<script type="text/javascript" src="{{ url_for('static', filename='recorder.js') }}"></script>  -->    
+  <div class="wrapper">
+    <h1 class="title">Welcome to today's session</h1>
+    <h1>Share your day with us</h1>
+    <div id="recorder">
+      <button id="record" class=" button-33">Record</button>
+      <button id="stop" class="button-33">Stop</button>
+      <!-- <a id="download"></a> -->
+      <!--<script type="text/javascript" src="{{ url_for('static', filename='recorder.js') }}"></script>  -->
+      <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+    </div>
+    <img id="video" class="input_video" src="{{ url_for('video_viewer') }}">
+    <button class="button-33" onclick="location.href='/results'" type="button">Recall past sessions</button>
+    <!-- inserting these scripts at the end to be able to use all the elements in the DOM -->
     <script src="https://cdn.rawgit.com/mattdiamond/Recorderjs/08e7abd9/dist/recorder.js"></script>
     <script src="/static/app.js"></script>
   </div>
-  <video width="320" height="240" controls>
-    <source src="/data/video/test.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-  </video>
-  <img src="{{ url_for('static', filename='gray.jpeg')  }}">
-  <div id="formats">Format: start recording to see sample rate</div>
-  <p><strong>Recordings:</strong></p>
-  <ol id="recordingsList"></ol>
-  <img id="video" src="{{ url_for('video_viewer') }}">
-
-  <!-- inserting these scripts at the end to be able to use all the elements in the DOM -->
 </body>
 </html>

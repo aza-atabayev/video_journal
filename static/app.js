@@ -21,7 +21,6 @@ stopButton.addEventListener("click", stopRecording);
 
 function startRecording() {
     console.log("recordButton clicked");
-
     /*
         Simple constraints object, for more advanced audio features see
         https://addpipe.com/blog/audio-constraints-getusermedia/
@@ -52,9 +51,6 @@ function startRecording() {
 
         */
         audioContext = new AudioContext();
-
-        //update the format 
-        document.getElementById("formats").innerHTML="Format: 1 channel pcm @ "+audioContext.sampleRate/1000+"kHz"
 
         /*  assign to gumStream for later use  */
         gumStream = stream;
@@ -147,16 +143,16 @@ function createDownloadLink(blob) {
     // CAMERA PART
     // XMLHttpRequest
     var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            // alert(xhr.responseText);
+    // xhr.onreadystatechange = function() {
+    //     if (xhr.readyState == 4 && xhr.status == 200) {
+    //         // alert(xhr.responseText);
 
-            // enable download link
-            var downloadLink = document.getElementById("download");
-            downloadLink.text = "Download Video";
-            downloadLink.href = "/static/video.avi";
-        }
-    }
+    //         // enable download link
+    //         var downloadLink = document.getElementById("download");
+    //         downloadLink.text = "Download Video";
+    //         downloadLink.href = "/static/video.avi";
+    //     }
+    // }
     xhr.open("POST", "/record_status");
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
     xhr.send(JSON.stringify({ status: "false" }));
