@@ -1,14 +1,20 @@
+from types import resolve_bases
 from flask import Flask, request, jsonify, send_from_directory
 
+import os
 import  sys
 import datetime
-
+import time
 from DAN.demo import get_prediction_video, Model
 import scripts.google_full as model
 
 from flask import Flask, render_template, Response, jsonify, request
 from camera import VideoCamera
 from pathlib import Path
+import moviepy.editor as mpe
+import ffmpeg
+
+import json
 
 app = Flask(__name__)
 
@@ -29,28 +35,34 @@ global_frame = None
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
+    global now
     if request.method == "POST":
-        #return '1'
         f = request.files['audio_data']
-        now = str(datetime.datetime.now()).split(" ")
-        Path(f"data/audio/{now[0]}/").mkdir(parents=True, exist_ok=True)
-        filename = f'data/audio/{now[0]}/{now[1]}.wav'
-        with open(filename, 'wb') as audio:
+        #Path(f"data/audio/{now[0]}/").mkdir(parents=True, exist_ok=True)
+        filename = "{}{}".format(now[0], now[1].replace(":", "").replace(".", ""))
+        with open(f"data/audio/{filename}.wav", 'wb') as audio:
             f.save(audio)
         print('file uploaded successfully')
-
-        prediction = model.get_prediction_audio(filename)
+    
+        save_ffmpeg(filename)
+  
+        prediction = model.get_prediction_audio(f'data/audio/{filename}.wav')
         data = {'prediction': prediction}
         print(data)
+        
         return render_template('index.html', request="POST")   
     else:
         return render_template("index.html")
         
-
+def save_ffmpeg(filename):
+    video  = ffmpeg.input(f"data/images/{filename}.avi").video # get only video channel
+    audio  = ffmpeg.input(f"data/audio/{filename}.wav").audio # get only audio channel
+    output = ffmpeg.output(video, audio, f"data/video/{filename}.mp4", vcodec='copy', acodec='aac', strict='experimental')
+    ffmpeg.run(output)
 
 @app.route('/record_status', methods=['POST'])
 def record_status():
-    global video_camera 
+    global video_camera, now
     if video_camera == None:
         video_camera = VideoCamera()
 
@@ -59,7 +71,8 @@ def record_status():
     status = json['status']
 
     if status == "true":
-        video_camera.start_record()
+        now = str(datetime.datetime.now()).split(" ")
+        video_camera.start_record(now)
         return jsonify(result="started")
     else:
         video_camera.stop_record()
@@ -90,6 +103,20 @@ def video_viewer():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', threaded=True)
+
+@app.route('/journal', methods = ['GET'])
+def send_all():
+    list_dir = os.listdir('data/video')
+    for item in list_dir:
+        if item[-4:] != '.mp4':
+            list_dir.remove(item)
+    return render_template('journal.html', result=list_dir)
+
+@app.route('/report', methods=['GET'])
+def report():
+    video_link = request.args.get('video')
+    data = video_link
+    return render_template('report.html', data = data)
 
 @app.route('/predict', methods=['POST'])
 def predict():

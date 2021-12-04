@@ -16,3 +16,9 @@ function displayFile(value, index, array) {
     container.appendChild(date)
     document.getElementById("list_container").appendChild(container)
 }
+
+var container = document.addEventListener("click", loadFIle);
+
+function loadFIle() {
+    window.location.href ='/report'
+}

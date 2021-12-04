@@ -1,5 +1,5 @@
 import requests
 
-resp = requests.post("http://localhost:5000/predict?path=data/test_video.mov")
+resp = requests.get("http://localhost:5000/journal")
 
 print(resp.text)
