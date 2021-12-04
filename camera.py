@@ -17,8 +17,8 @@ class RecordingThread (threading.Thread):
         self.cap = camera
         fourcc = cv2.VideoWriter_fourcc(*'XVID')
         #Path(f"data/images/{now[0]}/").mkdir(parents=True, exist_ok=True)
-        file_path = "data/images/{}{}.avi".format(now[0], now[1].replace(":", "").replace(".", ""))
-        self.out = cv2.VideoWriter(file_path,fourcc, 15.0, (1280,720))
+        self.file_path = "data/images/{}{}.avi".format(now[0], now[1].replace(":", "").replace(".", ""))
+        self.out = cv2.VideoWriter(self.file_path,fourcc, 15.0, (1280,720))
 
     def run(self):
         while self.isRunning:
@@ -27,7 +27,6 @@ class RecordingThread (threading.Thread):
                 self.out.write(frame)
 
         self.out.release()
-        get_prediction_video(file_path)
 
     def stop(self):
         self.isRunning = False
@@ -44,6 +43,7 @@ class VideoCamera(object):
         self.out = None
         # Thread for recording
         self.recordingThread = None
+        self.file_path = None
     
     def __del__(self):
         self.cap.release()
@@ -80,6 +80,7 @@ class VideoCamera(object):
     def stop_record(self):
         self.is_record = False
 
+        self.file_path = self.recordingThread.file_path
         if self.recordingThread != None:
             self.recordingThread.stop()
 
