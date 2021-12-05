@@ -24,21 +24,15 @@
                 <div class="list_container">
                     
                     {% for stamp in data.video_data %}
-                    {{ stamp }}
                     <div class="single_video_wrapper">
                         <video class="single_video">
                             <source src="data/video/{{ data.link }}#t={{ stamp.t_start }},{{ stamp.t_end }}"> 
                         </video>
-                    </div>
-                    <div class="single_video_wrapper">
-                        <video class="single_video">
-                            <source src="data/video/{{ data.link }}#t={{ stamp.t_start }},{{ stamp.t_end }}"> 
-                        </video>
-                    </div>
-                    <div class="single_video_wrapper">
-                        <video class="single_video">
-                            <source src="data/video/{{ data.link }}#t={{ stamp.t_start }},{{ stamp.t_end }}"> 
-                        </video>
+                        {% if stamp.res>0 %}
+                            <p class="positive small">Positive</p>
+                        {% else %}
+                            <p class="negative small">Negative</p>
+                        {% endif %}
                     </div>
                     {% endfor %}
                 </div>
