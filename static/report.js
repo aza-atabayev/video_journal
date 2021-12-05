@@ -2,7 +2,7 @@ var bigScreen = document.getElementById("bigvideo");
 var tempText = document.getElementById("temporary_text");
 var playButton = document.getElementById("playbutton");
 var pauseButton = document.getElementById("pausebutton");
-var resetButton = document.getElementById("resetbutton");
+// var resetButton = document.getElementById("resetbutton");
 // var bigvideo = document.getElementById("bigvideo_file");
 var video;
 
@@ -41,6 +41,7 @@ playButton.addEventListener("click", function() {
   setInterval(function () {
     if (video.currentTime < parseFloat(time[0]) || video.currentTime > parseFloat(time[1])){
       video.currentTime = parseFloat(time[0]);
+      video.pause()
     }
   }, 300);
   
@@ -50,13 +51,6 @@ pauseButton.addEventListener("click", function() {
   console.log(video.currentTime);
   video.pause();
 })
-
-video.addEventListener("timeupdate", function() {
-  console.log('skdfkjsdf')
-  
-})
-
-
 
 
 // bigScreen.addEventListener('mousedown', function() {
