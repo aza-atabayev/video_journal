@@ -8,14 +8,44 @@
     <title>Document</title>
 </head>
 <body>
-    <p>{{ data.link }}</p>
-    {% for stamp in data.video_data %}
-    <video class="single_video">
-        <source src="data/video/{{ data.link }}#t={{ stamp.t_start }},{{ stamp.t_end }}"> 
-    </video>
-    {% endfor %}
-
-    <button class="button-33" onclick="location.href='/'">Home</button>
-    <script src="/static/report.js"></script>
+    <div class="wrapper">
+        <div class="innerwrapper">
+            <div class="bigscreen_wrapper">
+                <h1 id="temporary_text">Click on the video you want to recall</h1>
+                <div class="bigvideo_wrapper" id="bigvideo"></div>
+                <div class="videobuttons_wrapper">
+                    <button class="button-33 mediabuttons" id="playbutton">▶️</button>
+                    <button class="button-33 mediabuttons" id="pausebutton">⏸</button>
+                    <button class="button-33 mediabuttons" id="resetbutton">🔄</button>
+                </div>
+            </div>
+            
+            <div class="list_wrapper">
+                <p class="text_title">Your best parts</p>
+                <div class="list_container">
+                    
+                    {% for stamp in data.video_data %}
+                    <div class="single_video_wrapper">
+                        <video class="single_video">
+                            <source src="data/video/{{ data.link }}#t={{ stamp.t_start }},{{ stamp.t_end }}"> 
+                        </video>
+                    </div>
+                    <div class="single_video_wrapper">
+                        <video class="single_video">
+                            <source src="data/video/{{ data.link }}#t={{ stamp.t_start }},{{ stamp.t_end }}"> 
+                        </video>
+                    </div>
+                    <div class="single_video_wrapper">
+                        <video class="single_video">
+                            <source src="data/video/{{ data.link }}#t={{ stamp.t_start }},{{ stamp.t_end }}"> 
+                        </video>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <button class="button-33" onclick="location.href='/'">Home</button>
+        <script src="/static/report.js"></script>
+    </div>
 </body>
 </html>
