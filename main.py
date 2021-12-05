@@ -175,7 +175,7 @@ def report():
     video_data = []
     for result in results:
         t_start, t_end, res = result.split('/')
-        t_start, t_end, res = float(t_start), float(t_end), res[:-2]
+        t_start, t_end, res = float(t_start), float(t_end), float(res[:-1])
         video_data.append({
             't_start':t_start,
             't_end':t_end,

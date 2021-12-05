@@ -21,6 +21,11 @@ stopButton.addEventListener("click", stopRecording);
 
 function startRecording() {
     console.log("recordButton clicked");
+    recordButton.disabled = true;
+    recordButton.classList.add("noHover");
+    stopButton.disabled = false;
+    stopButton.classList.remove("noHover");
+
     /*
         Simple constraints object, for more advanced audio features see
         https://addpipe.com/blog/audio-constraints-getusermedia/
@@ -31,10 +36,6 @@ function startRecording() {
     /*
         Disable the record button until we get a success or fail from getUserMedia() 
     */
-
-    recordButton.disabled = true;
-    stopButton.disabled = false;
-    //pauseButton.disabled = false
 
     /*
         We're using the standard promise based getUserMedia() 
@@ -109,10 +110,10 @@ function pauseRecording(){
 function stopRecording() {
     console.log("stopButton clicked");
 
-    //disable the stop button, enable the record too allow for new recordings
-    stopButton.disabled = true;
     recordButton.disabled = false;
-    //pauseButton.disabled = true;
+    recordButton.classList.remove("noHover");
+    stopButton.disabled = true;
+    stopButton.classList.add("noHover");
 
     //reset button just in case the recording is stopped while paused
     //pauseButton.innerHTML="Pause";

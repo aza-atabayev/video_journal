@@ -16,7 +16,14 @@
                 <video class="video_file">
                     <source src="data/video/{{ link }}" type="video/mp4">
                 </video>
-                <p id="{{ link[0] }}"></p>
+                <div class="containertext_wrapper">
+                    <p class="datetime">{{ link[1:5] }} / {{ link[6:8] }} / {{ link[9:11] }}    {{ link[11:13] }}:{{ link[13:15] }}</p>
+                    {% if link[0]=='1' %}
+                        <p class="positive">That was a great day!</p>
+                    {% else %}
+                    <p class="negative">Keep going, it's okay!</p>
+                    {% endif %}
+                </div>
             </div>
             {% endfor %}
         </div>
