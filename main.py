@@ -59,11 +59,11 @@ def index():
         with open(f"data/audio/{filename}.wav", 'wb') as audio:
             f.save(audio)
         print('file uploaded successfully')
-  
-        video_prediction = get_prediction_video(video_camera.file_path)
 
         audio_prediction = model.get_prediction_audio(f'data/audio/{filename}.wav')
         print(audio_prediction)
+
+        video_prediction = get_prediction_video(video_camera.file_path)
 
         data = []
 
@@ -87,6 +87,10 @@ def index():
             else:
                 final_res = audio_res
             sum_res += final_res
+            if len(data) > 0 and final_res * float(data[-1].split('/')[2]) >= 0:
+                t_start = float(data[-1].split('/')[0])
+                final_res = final_res + float(data[-1].split('/')[2]) 
+                data.pop(-1)
             data.append(f'{t_start}/{t_end}/{final_res}')
     
         print(data)
