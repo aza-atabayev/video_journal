@@ -10,7 +10,7 @@ var video;
 time = 0
 
 document.querySelectorAll('.single_video').forEach(item => {
-    item.addEventListener('mousedown', function() {
+    item.addEventListener('click', function() {
       //handle click
       bigScreen.style.width = "100%";
       bigScreen.style.height = "100%";

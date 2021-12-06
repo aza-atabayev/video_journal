@@ -223,3 +223,19 @@ h1 {
     font-family: CerebriSans-Regular,-apple-system,system-ui,Roboto,sans-serif;
 }
 
+.single_video_wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 5px;
+}
+
+.single_video:hover {
+    cursor: pointer;
+}
+
+.small {
+    padding-left: 20px;
+    font-size: 30px;
+}
+
